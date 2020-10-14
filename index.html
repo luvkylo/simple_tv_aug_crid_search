@@ -11,7 +11,7 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="container" style="max-width: 95%;">
         <div class="row pt-3 mb-3">
             <div class="col-12">
                 <div class="card">
@@ -50,8 +50,8 @@
                                         <div class="input-group">
                                             <select class="custom-select" id="view"
                                                 aria-label="Example select with button addon" required>
-                                                <option selected value="1">List</option>
-                                                <option value="2">Thumbnails</option>
+                                                <option value="1">List</option>
+                                                <option selected value="2">Thumbnails</option>
                                             </select>
                                         </div>
                                     </div>
@@ -73,8 +73,7 @@
                                             Please provide a valid number.
                                         </div>
                                     </div>
-                                    <div class="col-lg-1 col-md-12 mb-3">
-                                        <label>&ThickSpace;</label>
+                                    <div class="col-lg-1 col-md-12 mb-3" style="align-self: flex-end;">
                                         <button class="btn btn-primary" type="submit">Search</button>
                                     </div>
                                 </div>
@@ -141,11 +140,18 @@
                         tr = $("<tr class='d-flex'></tr>");
                     }
 
-                    tr.append(`<th class="col-3">${crid}</th>`);
-                    tr.append(`<td class="col-3">${data.status}</th>`);
+                    if (numVid >= 10) {
+                        tr.append(`<td class="col-1 crid">${crid}</th>`);
+                    } else {
+                        tr.append(`<td class="col-2 crid">${crid}</th>`);
+                    }
+                    tr.append(`<td class="col-1 status">${data.status}</th>`);
 
                     for (let i = 0; i < numVid; i++) {
-                        let td = $('<td class="col-3"></td>');
+                        let td = $('<td class="col-2"></td>');
+                        if (numVid >= 10) {
+                            td = $('<td class="col-1"></td>');
+                        }
                         if (data.data[i]) {
                             const vidRes = data.data[i];
                             // append all the data
@@ -154,11 +160,22 @@
                                 td.append(`<img src="${vidRes.image}">`)
                             }
                             // add text string
-                            td.append(`<div>${vidRes.string}</div`)
+                            td.append(`<a href="${vidRes.url}" target="_blank">${vidRes.string}</a`)
                         }
                         tr.append(td);
                     }
                     $("tbody").append(tr);
+
+                    if (numVid >= 10) {
+                        $("th").css("font-size", 'small');
+                        $("td").css("font-size ", 'small');
+                        $("img").css("max-height", '65px');
+                        $(".status").css("max-width", "90");
+                        $(".crid").css('max-width', "150");
+                        $(".crid").css('width', "1");
+                    } else {
+                        $(".crid").css('max-width', "150");
+                    }
                 }
 
                 function rebuildTable(numVid, view) {
@@ -178,11 +195,20 @@
                     } else {
                         tr = $("<tr class='d-flex'></tr>");
                     }
-                    tr.append('<th scope="col" class="col-3">Crid</th>');
-                    tr.append('<th scope="col" class="col-1">Status</th>');
+                    if (numVid >= 10) {
+                        tr.append('<th scope="col" class="col-1 crid">Crid</th>');
+                    } else {
+                        tr.append('<th scope="col" class="col-2 crid">Crid</th>');
+                    }
+
+                    tr.append('<th scope="col" class="col-1 status">Status</th>');
 
                     for (let i = 1; i <= numVid; i++) {
-                        tr.append(`<th scope="col" class="col-3">Video Result #${i}</th>`)
+                        if (numVid >= 10) {
+                            tr.append(`<th scope="col" class="col-1">Video Result #${i}</th>`)
+                        } else {
+                            tr.append(`<th scope="col" class="col-2">Video Result #${i}</th>`)
+                        }
                     }
 
                     thead.append(tr);
@@ -195,6 +221,7 @@
                 function time_convert(num) {
                     let hours = Math.floor(num / 60);
                     let minutes = num % 60;
+                    minutes = minutes < 10 ? '0' + minutes : minutes;
                     return hours + ":" + minutes;
                 }
 
@@ -217,9 +244,12 @@
                                 console.log(data);
                                 let returnData = [];
                                 data.videos.forEach((vid) => {
+                                    let string = `${time_convert(vid.duration)} (${vid.source}) ${vid.title}`;
+                                    string = string.slice(0, 50);
                                     returnData.push({
                                         image: vid.image_url,
-                                        string: `${time_convert(vid.duration)} (${vid.source}) ${vid.title}`
+                                        string: string,
+                                        url: vid.media_url,
                                     });
                                 });
 
@@ -230,6 +260,7 @@
 
                 forms.on('submit', async (e) => {
                     e.preventDefault();
+                    forms.removeClass("was-validated");
 
                     const deviceId = $("#deviceId").val();
                     const auth = $("#auth").val();
@@ -239,7 +270,7 @@
 
                     const headers = { 'X-Frequency-DeviceId': deviceId, 'X-Frequency-Auth': auth };
 
-                    const cridArr = crids.split(",");
+                    const cridArr = crids.replace(/(\r\n|\r|\n)/g, ",").split(",");
 
                     rebuildTable(numVid, view);
 
