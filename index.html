@@ -166,15 +166,20 @@
                     }
                     $("tbody").append(tr);
 
+                    $("th").css("font-size", 'xx-small');
+                    $("td").css("font-size", 'xx-small');
+
                     if (numVid >= 10) {
-                        $("th").css("font-size", 'xx-small');
-                        $("td").css("font-size", 'xx-small');
                         $("img").css("max-height", '65px');
+                        $("img").css("max-width", '120px');
                         $(".status").css("max-width", "90");
                         $(".crid").css('max-width', "150");
                         $(".crid").css('width', "1");
                     } else {
-                        $(".crid").css('max-width', "150");
+                        $("img").css("max-height", '130px');
+                        $("img").css("max-width", '240px');
+                        $(".crid").css('max-width', "200");
+                        $(".crid").css('width', "1");
                     }
                 }
 
