@@ -167,8 +167,8 @@
                     $("tbody").append(tr);
 
                     if (numVid >= 10) {
-                        $("th").css("font-size", 'small');
-                        $("td").css("font-size ", 'small');
+                        $("th").css("font-size", 'xx-small');
+                        $("td").css("font-size", 'xx-small');
                         $("img").css("max-height", '65px');
                         $(".status").css("max-width", "90");
                         $(".crid").css('max-width', "150");
@@ -281,7 +281,6 @@
                         const data = await get(url, headers);
                         if (x === 1) {
                             $('.collapse').collapse();
-                            $("#crids").val('');
                         }
                         addTableCol(crid, data, view, numVid);
                     }
