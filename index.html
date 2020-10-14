@@ -1,0 +1,262 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TV Aug Crid Search</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+        integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row pt-3 mb-3">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header" id="headingOne">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link btn-block text-left collapseBtn" type="button"
+                                data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                                aria-controls="collapseOne">
+                                Search
+                            </button>
+                        </h2>
+                    </div>
+
+                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne">
+                        <div class="card-body">
+                            <form class="needs-validation" novalidate>
+                                <div class="form-row">
+                                    <div class="col-md-4 mb-3">
+                                        <label for="deviceId">Device ID</label>
+                                        <input type="text" class="form-control" id="deviceId" placeholder="Device ID"
+                                            required>
+                                        <div class="invalid-feedback">
+                                            Please provide Device ID.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="auth">Auth Token</label>
+                                        <input type="text" class="form-control" id="auth" placeholder="Auth Token"
+                                            required>
+                                        <div class="invalid-feedback">
+                                            Please provide Auth Token.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="view">View</label>
+                                        <div class="input-group">
+                                            <select class="custom-select" id="view"
+                                                aria-label="Example select with button addon" required>
+                                                <option selected value="1">List</option>
+                                                <option value="2">Thumbnails</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-lg-9 col-md-8 mb-3">
+                                        <label for="crids">Crids</label>
+                                        <input type="text" class="form-control" id="crids" placeholder="Crids" required>
+                                        <div class="invalid-feedback">
+                                            Please provide a crid.
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2 col-md-4 mb-3">
+                                        <label for="numVid">Max Video Results</label>
+                                        <input type="text" class="form-control" id="numVid" value='10' required
+                                            pattern="\d+">
+                                        <div class="invalid-feedback">
+                                            Please provide a valid number.
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-1 col-md-12 mb-3">
+                                        <label>&ThickSpace;</label>
+                                        <button class="btn btn-primary" type="submit">Search</button>
+                                    </div>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body table-card">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Crid</th>
+                                        <th scope="col">Video Result</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.js" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+        crossorigin="anonymous"></script>
+    <script>
+        (() => {
+            'use strict';
+            window.addEventListener('load', () => {
+                let forms = $('.needs-validation');
+
+                let validation = Array.prototype.filter.call(forms, (form) => {
+                    form.addEventListener('submit', (event) => {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+
+                $('.collapseBtn').on('click', () => {
+                    $('.collapse').collapse();
+                });
+
+                function addTableCol(crid, data, view, numVid) {
+                    let tr = $("<tr></tr>");
+                    if (view == "2") {
+                        tr = $("<tr></tr>");
+                    } else {
+                        tr = $("<tr class='d-flex'></tr>");
+                    }
+
+                    tr.append(`<th class="col-3">${crid}</th>`);
+                    tr.append(`<td class="col-3">${data.status}</th>`);
+
+                    for (let i = 0; i < numVid; i++) {
+                        let td = $('<td class="col-3"></td>');
+                        if (data.data[i]) {
+                            const vidRes = data.data[i];
+                            // append all the data
+                            if (view == "2" && vidRes.image.length > 0) {
+                                // add img
+                                td.append(`<img src="${vidRes.image}">`)
+                            }
+                            // add text string
+                            td.append(`<div>${vidRes.string}</div`)
+                        }
+                        tr.append(td);
+                    }
+                    $("tbody").append(tr);
+                }
+
+                function rebuildTable(numVid, view) {
+                    $(".table-card").empty();
+                    let tableDiv = $("<div></div");
+                    tableDiv.addClass("table-responsive");
+
+                    let table = $("<table></table>");
+                    table.addClass("table table-striped table-bordered");
+
+                    let thead = $("<thead></thead>");
+                    let tbody = $("<tbody></tbody>");
+
+                    let tr = $("<tr></tr>");
+                    if (view == "2") {
+                        tr = $("<tr></tr>");
+                    } else {
+                        tr = $("<tr class='d-flex'></tr>");
+                    }
+                    tr.append('<th scope="col" class="col-3">Crid</th>');
+                    tr.append('<th scope="col" class="col-3">Status</th>');
+
+                    for (let i = 1; i <= numVid; i++) {
+                        tr.append(`<th scope="col" class="col-3">Video Result #${i}</th>`)
+                    }
+
+                    thead.append(tr);
+                    table.append(thead);
+                    table.append(tbody);
+                    tableDiv.append(table);
+                    $('.table-card').append(tableDiv);
+                }
+
+                function time_convert(num) {
+                    let hours = Math.floor(num / 60);
+                    let minutes = num % 60;
+                    return hours + ":" + minutes;
+                }
+
+                function get(url, headers) {
+                    return new Promise((res) => {
+                        $.ajax({
+                            url: url,
+                            headers: headers,
+                            statusCode: {
+                                401: () => {
+                                    $(".table-card").empty();
+                                    $(".table-card").append('<div class="alert alert-danger" role="alert">Device ID or Auth Token expired!</div>');
+                                },
+                                404: () => {
+                                    res({ status: 404, data: [] })
+                                }
+                            }
+                        })
+                            .done((data) => {
+                                console.log(data);
+                                let returnData = [];
+                                data.videos.forEach((vid) => {
+                                    returnData.push({
+                                        image: vid.image_url,
+                                        string: `${time_convert(vid.duration)} (${vid.source}) ${vid.title}`
+                                    });
+                                });
+
+                                res({ status: 200, data: returnData });
+                            });
+                    })
+                }
+
+                forms.on('submit', async (e) => {
+                    e.preventDefault();
+
+                    const deviceId = $("#deviceId").val();
+                    const auth = $("#auth").val();
+                    const view = $("select#view option:checked").val(); // 1 = list, 2 = thumbnail
+                    const crids = $("#crids").val();
+                    const numVid = $("#numVid").val();
+
+                    const headers = { 'X-Frequency-DeviceId': deviceId, 'X-Frequency-Auth': auth };
+
+                    const cridArr = crids.split(",");
+
+                    rebuildTable(numVid, view);
+
+                    for (let x = 0; x < cridArr.length; x++) {
+                        const crid = cridArr[x].trim();
+                        const url = `http://prd-lgi-api.frequency.com/api/2.0/programs/videos?video_image=256w144h,solid,rectangle&external_identifier_source=LGI&external_identifier=${crid}&page_size=${numVid}`;
+
+                        const data = await get(url, headers);
+                        if (x === 1) {
+                            $('.collapse').collapse();
+                            $("#crids").val('');
+                        }
+                        addTableCol(crid, data, view, numVid);
+                    }
+                });
+            }, false);
+        })();
+    </script>
+</body>
+
+</html>
