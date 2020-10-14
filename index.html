@@ -244,7 +244,7 @@
 
                     for (let x = 0; x < cridArr.length; x++) {
                         const crid = cridArr[x].trim();
-                        const url = `http://prd-lgi-api.frequency.com/api/2.0/programs/videos?video_image=256w144h,solid,rectangle&external_identifier_source=LGI&external_identifier=${crid}&page_size=${numVid}`;
+                        const url = `https://prd-lgi-api.frequency.com/api/2.0/programs/videos?video_image=256w144h,solid,rectangle&external_identifier_source=LGI&external_identifier=${crid}&page_size=${numVid}`;
 
                         const data = await get(url, headers);
                         if (x === 1) {
